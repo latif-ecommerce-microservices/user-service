@@ -1,0 +1,22 @@
+# Binaries
+bin/
+build/
+
+# Go
+*.exe
+*.log
+*.out
+
+# Jet generated files
+/internal/db/jet-queries/
+
+# ENV
+.env
+
+# Vendor
+vendor/
+
+# IDE
+.vscode/
+.idea/
+.DS_Store
