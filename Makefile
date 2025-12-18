@@ -6,24 +6,21 @@ new-migration:
 -include .env
 export $(shell sed 's/=.*//' .env)
 
-JET_CMD := jet
+JET_CMD := $(shell go env GOPATH)/bin/jet
 SCHEMA := public
 OUTPUT := ./internal/generated
+EXCLUDE_FILE := exclude_tables.txt
+EXCLUDED_TABLES := $(shell paste -sd, $(EXCLUDE_FILE))
 
 DATABASE_URL := postgresql://$(DB_USERNAME):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=$(DB_SSL_MODE)
 
 sync-jet:
 	@echo "Generating Jet models ..."
 	$(JET_CMD) \
-		-source=postgres \
-		-host=$(DB_HOST) \
-		-port=$(DB_PORT) \
-		-user=$(DB_USERNAME) \
-		-password=$(DB_PASSWORD) \
-		-dbname=$(DB_NAME) \
+		-dsn="$(DATABASE_URL)" \
 		-schema=$(SCHEMA) \
-		-sslmode=$(DB_SSL_MODE) \
-		-path=$(OUTPUT)
+		-path=$(OUTPUT) \
+		-ignore-tables=$(EXCLUDED_TABLES)
 	@echo "Jet models generated successfully."
 
 up-migration:

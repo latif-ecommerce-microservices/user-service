@@ -1,5 +1,6 @@
 github.com/andybalholm/brotli v1.0.2/go.mod h1:loMXtMfwqflxFJPmdbJO0a3KNoPuLBgiu3qAvBg8x/Y=
 github.com/go-jet/jet/v2 v2.12.0/go.mod h1:ufQVRQeI1mbcO5R8uCEVcVf3Foej9kReBdwDx7YMWUM=
+github.com/go-jet/jet/v2 v2.14.0/go.mod h1:dqTAECV2Mo3S2NFjbm4vJ1aDruZjhaJ1RAAR8rGUkkc=
 github.com/gofiber/fiber/v2 v2.20.1/go.mod h1:/LdZHMUXZvTTo7gU4+b1hclqCAdoQphNQ9bi9gutPyI=
 github.com/gofiber/fiber/v2 v2.52.0/go.mod h1:KEOE+cXMhXG0zHc9d8+E38hoX+ZN7bhOtgeF2oT6jrQ=
 github.com/gofiber/jwt/v3 v3.2.0/go.mod h1:Z05kGvvdRqbWMvb3uYmAPwfFyCV8/n/QVorzq4XjwvU=
