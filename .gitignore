@@ -1,22 +1,31 @@
-# Binaries
+# =====================
+# Go build artifacts
+# =====================
 bin/
 build/
-
-# Go
 *.exe
 *.log
 *.out
 
-# Jet generated files
-/internal/db/jet-queries/
+# =====================
+# Jet generated code
+# =====================
+/internal/generated/public/
+/internal/generated/table/
 
-# ENV
+# =====================
+# Environment
+# =====================
 .env
 
-# Vendor
+# =====================
+# Dependencies
+# =====================
 vendor/
 
-# IDE
+# =====================
+# IDE / OS
+# =====================
 .vscode/
 .idea/
 .DS_Store
