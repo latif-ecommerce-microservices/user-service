@@ -7,6 +7,6 @@ import (
 	"github.com/latif-ecommerce-microservices/user-service/internal/generated/go_check/public/model"
 )
 
-type Service interface {
+type ServiceProvider interface {
 	GetByID(ctx context.Context, id uuid.UUID) (*model.Users, error)
 }
