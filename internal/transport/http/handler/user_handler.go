@@ -58,7 +58,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httputil.WriteSuccessResponse(w, res, "User created successfully")
+	httputil.WriteSuccessResponse(w, res, "user created successfully")
 }
 
 func (h *UserHandler) GetByID(w http.ResponseWriter, r *http.Request) {
@@ -66,7 +66,7 @@ func (h *UserHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 
 	id, err := uuid.Parse(idStr)
 	if err != nil {
-		httputil.WriteBadRequestResponse(w, "invalid user id", "")
+		httputil.WriteBadRequestResponse(w, "invalid user id", err.Error())
 		return
 	}
 
@@ -76,5 +76,5 @@ func (h *UserHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httputil.WriteSuccessResponse(w, res, "User retrieved successfully")
+	httputil.WriteSuccessResponse(w, res, "user retrieved successfully")
 }

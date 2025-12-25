@@ -11,4 +11,5 @@ var (
 var (
 	InternalServerError    = NewInternalServerError(ErrUnexpected, "Something Went Wrong")
 	EmailAlreadyExistError = NewClientError(ErrClient, "Email Already Exist")
+	UserNotFoundError      = NewNotFoundError(ErrNotFound, "User Not Found")
 )

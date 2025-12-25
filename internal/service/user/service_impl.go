@@ -53,7 +53,11 @@ func (s *service) CreateUser(ctx context.Context, request dto.CreateUserRequest)
 func (s *service) GetByID(ctx context.Context, id uuid.UUID) (*dto.DetailUserResponse, error) {
 	user, err := s.userRepo.FindByID(ctx, id)
 	if err != nil {
-		return nil, err
+		return nil, customerror.InternalServerError.WithCause(err).WithStackTrace()
+	}
+
+	if user == nil {
+		return nil, customerror.UserNotFoundError.WithLocator(customerror.WhereAmI())
 	}
 
 	return &dto.DetailUserResponse{
