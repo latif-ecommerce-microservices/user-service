@@ -94,10 +94,9 @@ func WriteSuccessPaginatedResponse[T any](rs http.ResponseWriter, resp Paginated
 func WriteSuccessResponse(rs http.ResponseWriter, data any, message string) {
 	writer := Writer(rs)
 	writer.JSON(http.StatusOK, Response{
-		Data:    data,
-		Detail:  "Request success",
-		Code:    "request_success",
+		Detail:  "SUCCESS",
 		Message: message,
+		Data:    data,
 	})
 }
 

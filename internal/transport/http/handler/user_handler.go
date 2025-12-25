@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"encoding/json"
 	"github.com/google/uuid"
+	"github.com/latif-ecommerce-microservices/user-service/internal/dto"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -32,32 +34,32 @@ func NewUserHandler(
 
 func (h *UserHandler) RegisterRoutes(router chi.Router) {
 	router.Route("/users", func(r chi.Router) {
-		//r.Post("/", h.CreateUser)
+		r.Post("/", h.CreateUser)
 		r.Get("/{id}", h.GetByID)
 	})
 }
 
-//func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-//	var req dto.CreateUserRequest
-//
-//	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-//		httputil.WriteBadRequestResponse(w, "invalid JSON body", err.Error())
-//		return
-//	}
-//
-//	if err := h.validator.Struct(req); err != nil {
-//		httputil.HandleError(w, h.logger, err)
-//		return
-//	}
-//
-//	res, err := h.userService.CreateUser(r.Context(), req)
-//	if err != nil {
-//		httputil.HandleError(w, h.logger, err)
-//		return
-//	}
-//
-//	httputil.WriteSuccessResponse(w, res, "User created successfully")
-//}
+func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+	var req dto.CreateUserRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		httputil.WriteBadRequestResponse(w, "invalid JSON body", err.Error())
+		return
+	}
+
+	if err := h.validator.Struct(req); err != nil {
+		httputil.HandleError(w, h.logger, err)
+		return
+	}
+
+	res, err := h.userService.CreateUser(r.Context(), req)
+	if err != nil {
+		httputil.HandleError(w, h.logger, err)
+		return
+	}
+
+	httputil.WriteSuccessResponse(w, res, "User created successfully")
+}
 
 func (h *UserHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
@@ -74,5 +76,5 @@ func (h *UserHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	httputil.WriteSuccessResponse(w, res, "Success")
+	httputil.WriteSuccessResponse(w, res, "User retrieved successfully")
 }
