@@ -36,6 +36,8 @@ func (h *UserHandler) RegisterRoutes(router chi.Router) {
 	router.Route("/users", func(r chi.Router) {
 		r.Post("/", h.CreateUser)
 		r.Get("/{id}", h.GetByID)
+		r.Put("/{id}", h.UpdateUser)
+		r.Delete("/{id}", h.DeleteUser)
 	})
 }
 
@@ -77,4 +79,52 @@ func (h *UserHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httputil.WriteSuccessResponse(w, res, "user retrieved successfully")
+}
+
+func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "id")
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		httputil.WriteBadRequestResponse(w, "invalid user id", err.Error())
+		return
+	}
+
+	var req dto.UpdateUserRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		httputil.WriteBadRequestResponse(w, "invalid JSON body", err.Error())
+		return
+	}
+
+	if err := h.validator.Struct(req); err != nil {
+		httputil.HandleError(w, h.logger, err)
+		return
+	}
+
+	res, err := h.userService.UpdateUser(r.Context(), id, req)
+	if err != nil {
+		httputil.HandleError(w, h.logger, err)
+		return
+	}
+
+	httputil.WriteSuccessResponse(w, res, "user updated successfully")
+}
+
+func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "id")
+
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		httputil.WriteBadRequestResponse(w, "invalid user id", err.Error())
+		return
+	}
+
+	err = h.userService.DeleteUser(r.Context(), id)
+	if err != nil {
+		httputil.HandleError(w, h.logger, err)
+		return
+	}
+
+	httputil.WriteSuccessResponse(w, nil, "user deleted successfully")
 }

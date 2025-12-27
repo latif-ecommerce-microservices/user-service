@@ -14,6 +14,17 @@ type CreateUserResponse struct {
 	CreatedAt string    `json:"created_at"`
 }
 
+type UpdateUserRequest struct {
+	Name        *string `json:"name" validate:"omitempty,min=3"`
+	Email       *string `json:"email" validate:"omitempty,email"`
+	PhoneNumber *string `json:"phone_number" validate:"omitempty"`
+}
+
+type UpdateUserResponse struct {
+	ID        uuid.UUID `json:"id"`
+	UpdatedAt string    `json:"updated_at"`
+}
+
 type DetailUserResponse struct {
 	ID          uuid.UUID `json:"id"`
 	Name        string    `json:"name"`

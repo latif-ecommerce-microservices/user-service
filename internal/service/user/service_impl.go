@@ -16,8 +16,81 @@ type service struct {
 	userRepo repository.UserRepositoryProvider
 }
 
-func NewService(userRepo repository.UserRepositoryProvider) ServiceProvider {
-	return &service{userRepo: userRepo}
+func (s *service) UpdateUser(ctx context.Context, id uuid.UUID, request dto.UpdateUserRequest) (*dto.UpdateUserResponse, error) {
+	user, err := s.userRepo.FindByID(ctx, id)
+
+	if err != nil {
+		return nil, customerror.InternalServerError.
+			WithCause(err).
+			WithStackTrace()
+	}
+
+	if user == nil {
+		return nil, customerror.UserNotFoundError.
+			WithLocator(customerror.WhereAmI())
+	}
+
+	if request.Email != nil && *request.Email != user.Email {
+		existing, err := s.userRepo.GetUserByEmail(ctx, *request.Email)
+		if err != nil {
+			return nil, err
+		}
+		if existing != nil {
+			return nil, customerror.EmailAlreadyExistError
+		}
+		user.Email = *request.Email
+	}
+
+	if request.Name != nil {
+		user.Name = *request.Name
+	}
+
+	if request.PhoneNumber != nil {
+		user.PhoneNumber = request.PhoneNumber
+	}
+
+	now := time.Now()
+	user.UpdatedAt = &now
+
+	updatedUser, err := s.userRepo.UpdateUser(ctx, *user)
+	if err != nil {
+		return nil, customerror.InternalServerError.
+			WithCause(err).
+			WithStackTrace()
+	}
+
+	return &dto.UpdateUserResponse{
+		ID:        updatedUser.ID,
+		UpdatedAt: updatedUser.UpdatedAt.Format(time.DateTime),
+	}, nil
+}
+
+func (s *service) DeleteUser(ctx context.Context, id uuid.UUID) error {
+	user, err := s.userRepo.FindByID(ctx, id)
+	if err != nil {
+		return customerror.InternalServerError.
+			WithCause(err).
+			WithStackTrace().
+			WithLocator(customerror.WhereAmI())
+	}
+
+	if user == nil {
+		return customerror.UserNotFoundError.
+			WithLocator(customerror.WhereAmI())
+	}
+
+	if user.DeletedAt != nil {
+		return nil
+	}
+
+	now := time.Now()
+	user.DeletedAt = &now
+
+	if _, err := s.userRepo.UpdateUser(ctx, *user); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *service) CreateUser(ctx context.Context, request dto.CreateUserRequest) (dto.CreateUserResponse, error) {
@@ -66,4 +139,8 @@ func (s *service) GetByID(ctx context.Context, id uuid.UUID) (*dto.DetailUserRes
 		Email:       user.Email,
 		PhoneNumber: user.PhoneNumber,
 	}, nil
+}
+
+func NewService(userRepo repository.UserRepositoryProvider) ServiceProvider {
+	return &service{userRepo: userRepo}
 }
