@@ -66,11 +66,38 @@ func (r *userRepository) FindByID(ctx context.Context, id uuid.UUID) (*model.Use
 	return &user, nil
 }
 
-func (r *userRepository) GetUserByEmail(ctx context.Context, email string) (*model.Users, error) {
+func (r *userRepository) FindActiveByID(ctx context.Context, id uuid.UUID) (*model.Users, error) {
 	t := table.Users
+
 	stmt := t.
 		SELECT(t.AllColumns).
-		WHERE(t.Email.EQ(postgres.String(email))).
+		WHERE(
+			t.ID.EQ(postgres.UUID(id)).
+				AND(t.DeletedAt.IS_NULL()),
+		).
+		LIMIT(1)
+
+	var user model.Users
+	err := stmt.QueryContext(ctx, r.db, &user)
+	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (r *userRepository) GetActiveUserByEmail(ctx context.Context, email string) (*model.Users, error) {
+	t := table.Users
+
+	stmt := t.
+		SELECT(t.AllColumns).
+		WHERE(
+			t.Email.EQ(postgres.String(email)).
+				AND(t.DeletedAt.IS_NULL()),
+		).
 		LIMIT(1)
 
 	var user model.Users

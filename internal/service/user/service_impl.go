@@ -6,6 +6,7 @@ import (
 	"github.com/latif-ecommerce-microservices/user-service/internal/generated/go_check/public/model"
 	"github.com/latif-ecommerce-microservices/user-service/internal/helper/passwordhelper"
 	"github.com/latif-ecommerce-microservices/user-service/pkg/customerror"
+	"github.com/latif-ecommerce-microservices/user-service/pkg/ptr"
 	"time"
 
 	"github.com/google/uuid"
@@ -17,7 +18,7 @@ type service struct {
 }
 
 func (s *service) UpdateUser(ctx context.Context, id uuid.UUID, request dto.UpdateUserRequest) (*dto.UpdateUserResponse, error) {
-	user, err := s.userRepo.FindByID(ctx, id)
+	user, err := s.userRepo.FindActiveByID(ctx, id)
 
 	if err != nil {
 		return nil, customerror.InternalServerError.
@@ -31,9 +32,11 @@ func (s *service) UpdateUser(ctx context.Context, id uuid.UUID, request dto.Upda
 	}
 
 	if request.Email != nil && *request.Email != user.Email {
-		existing, err := s.userRepo.GetUserByEmail(ctx, *request.Email)
+		existing, err := s.userRepo.GetActiveUserByEmail(ctx, *request.Email)
 		if err != nil {
-			return nil, err
+			return nil, customerror.InternalServerError.
+				WithCause(err).
+				WithStackTrace()
 		}
 		if existing != nil {
 			return nil, customerror.EmailAlreadyExistError
@@ -94,7 +97,7 @@ func (s *service) DeleteUser(ctx context.Context, id uuid.UUID) error {
 }
 
 func (s *service) CreateUser(ctx context.Context, request dto.CreateUserRequest) (dto.CreateUserResponse, error) {
-	currentUser, err := s.userRepo.GetUserByEmail(ctx, request.Email)
+	currentUser, err := s.userRepo.GetActiveUserByEmail(ctx, request.Email)
 	if err != nil {
 		return dto.CreateUserResponse{}, err
 	}
@@ -105,11 +108,12 @@ func (s *service) CreateUser(ctx context.Context, request dto.CreateUserRequest)
 
 	newID, _ := uuid.NewV7()
 	newUser := model.Users{
-		ID:        newID,
-		Name:      request.Name,
-		Email:     request.Email,
-		Password:  passwordhelper.HashPassword(request.Password),
-		CreatedAt: time.Now(),
+		ID:          newID,
+		Name:        request.Name,
+		Email:       request.Email,
+		PhoneNumber: ptr.String(request.PhoneNumber),
+		Password:    passwordhelper.HashPassword(request.Password),
+		CreatedAt:   time.Now(),
 	}
 
 	createdUser, err := s.userRepo.CreateUser(ctx, newUser)
@@ -124,7 +128,7 @@ func (s *service) CreateUser(ctx context.Context, request dto.CreateUserRequest)
 }
 
 func (s *service) GetByID(ctx context.Context, id uuid.UUID) (*dto.DetailUserResponse, error) {
-	user, err := s.userRepo.FindByID(ctx, id)
+	user, err := s.userRepo.FindActiveByID(ctx, id)
 	if err != nil {
 		return nil, customerror.InternalServerError.WithCause(err).WithStackTrace()
 	}
