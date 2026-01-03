@@ -135,7 +135,7 @@ func buildCustomErrorResponse(w ResponseWriter, err error, log *logging.Logger) 
 	}
 
 	apiError := Response{
-		Code:    parsedError.Code(),
+		Detail:  parsedError.Code(),
 		Message: parsedError.Error(),
 	}
 
