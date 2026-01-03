@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/redis/go-redis/v9"
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -13,16 +14,15 @@ import (
 )
 
 type InternalConnection struct {
-	DB *sql.DB
+	DB          *sql.DB
+	RedisClient *redis.Client
 }
 
-func NewInternalConnection(ctx context.Context, log *logging.Logger, cfg *config.DatabaseConfig) (InternalConnection, error) {
-	db, err := NewDbConnection(ctx, log, cfg)
-	if err != nil {
-		return InternalConnection{}, err
+func NewInternalConnection(db *sql.DB, rdb *redis.Client) InternalConnection {
+	return InternalConnection{
+		DB:          db,
+		RedisClient: rdb,
 	}
-
-	return InternalConnection{DB: db}, nil
 }
 
 func NewDbConnection(ctx context.Context, log *logging.Logger, cfg *config.DatabaseConfig) (*sql.DB, error) {
@@ -50,6 +50,21 @@ func NewDbConnection(ctx context.Context, log *logging.Logger, cfg *config.Datab
 	}
 
 	return db, nil
+}
+
+func NewRedisConnection(ctx context.Context, log *logging.Logger, cfg *config.RedisConfig) (*redis.Client, error) {
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     fmt.Sprintf("%s:%s", cfg.Host, cfg.Port),
+		Password: cfg.Password,
+		DB:       cfg.DB,
+	})
+
+	if err := rdb.Ping(ctx).Err(); err != nil {
+		log.Fatal(fmt.Sprintf("failed to connect to redis: %s", err.Error()))
+		return nil, err
+	}
+
+	return rdb, nil
 }
 
 func (ic *InternalConnection) Close() error {

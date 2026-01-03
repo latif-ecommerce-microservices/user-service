@@ -14,7 +14,7 @@ func RunMigration(ctx context.Context, cfg *config.Config, log *logging.Logger) 
 		return nil
 	}
 
-	db, err := NewInternalConnection(ctx, log, &cfg.Database)
+	db, err := NewDbConnection(ctx, log, &cfg.Database)
 	if err != nil {
 		log.Error(err.Error())
 	}
@@ -23,7 +23,7 @@ func RunMigration(ctx context.Context, cfg *config.Config, log *logging.Logger) 
 	log.Info("Running database migration...")
 
 	migrationDir := "./internal/generated/migrations"
-	if err := goose.Up(db.DB, migrationDir); err != nil {
+	if err := goose.Up(db, migrationDir); err != nil {
 		return err
 	}
 	log.Info("Database migration completed successfully.")

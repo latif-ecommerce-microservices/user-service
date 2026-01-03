@@ -11,6 +11,7 @@ type Config struct {
 	LogLevel    string `env:"LOG_LEVEL"`
 	AppHTTPPort string `env:"APP_HTTP_PORT" default:"8080"`
 	Database    DatabaseConfig
+	Redis       RedisConfig
 }
 
 type DatabaseConfig struct {
@@ -23,6 +24,13 @@ type DatabaseConfig struct {
 	MaxIdleConns     int    `env:"DB_MAX_IDLE_CONNS" default:"5"`
 	MaxOpenConns     int    `env:"DB_MAX_OPEN_CONNS" default:"20"`
 	EnableMigrations bool   `env:"ENABLE_MIGRATIONS" default:"true"`
+}
+
+type RedisConfig struct {
+	Host     string `env:"REDIS_HOST" default:"localhost"`
+	Port     string `env:"REDIS_PORT" default:"6379"`
+	Password string `env:"REDIS_PASSWORD"`
+	DB       int    `env:"REDIS_DB" default:"0"`
 }
 
 func (c *Config) GetLogLevel() logging.Level {

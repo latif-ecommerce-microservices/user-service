@@ -37,10 +37,18 @@ func NewAppServer(cfg *config.Config, logger *logging.Logger) *Server {
 }
 
 func (s *Server) BeforeStart(ctx context.Context) error {
-	internalClient, err := NewInternalConnection(ctx, s.logger, &s.cfg.Database)
+	db, err := NewDbConnection(ctx, s.logger, &s.cfg.Database)
 	if err != nil {
 		return err
 	}
+
+	rdb, err := NewRedisConnection(ctx, s.logger, &s.cfg.Redis)
+	if err != nil {
+		return err
+	}
+
+	internalClient := NewInternalConnection(db, rdb)
+
 	repository := NewRepository(internalClient)
 	service := NewService(repository)
 	newValidator := validator.New()
