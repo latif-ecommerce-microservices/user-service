@@ -48,6 +48,9 @@ func (s *Server) BeforeStart(ctx context.Context) error {
 	userHandler := handler.NewUserHandler(service.UserService, newValidator, s.logger)
 	userHandler.RegisterRoutes(s.router)
 
+	authHandler := handler.NewAuthHandler(service.AuthService, newValidator, s.logger)
+	authHandler.RegisterRoutes(s.router)
+
 	s.InternalConnection = &internalClient
 	return nil
 }

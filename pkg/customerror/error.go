@@ -2,6 +2,7 @@ package customerror
 
 import (
 	"fmt"
+	"net/http"
 
 	pkgerrors "github.com/pkg/errors"
 )
@@ -13,6 +14,15 @@ type Error struct {
 	locator    *Locator
 	baseErr    error
 	stackTrace pkgerrors.StackTrace
+	httpStatus int
+}
+
+func (ce Error) HTTPStatus() int {
+	if ce.httpStatus == 0 {
+		return 500
+	}
+
+	return ce.httpStatus
 }
 
 func (ce Error) Error() string {
@@ -81,38 +91,30 @@ func (ce Error) StackTrace() pkgerrors.StackTrace {
 	return ce.stackTrace
 }
 
-func NewErrorWithCode(code Code, message string) Error {
-	return Error{code, message, nil, nil, nil, nil}
-}
-
-func NewErrorWithCodeAndLocator(code Code, message string, locator *Locator) Error {
-	return Error{code, message, nil, locator, nil, nil}
-}
-
 func NewClientError(code Code, message string) Error {
-	return NewErrorWithCode(code, message)
+	return Error{code: code, message: message, httpStatus: http.StatusBadRequest}
 }
 
 func NewForbiddenError(code Code, message string) Error {
-	return NewErrorWithCode(code, message)
+	return Error{code: code, message: message, httpStatus: http.StatusForbidden}
 }
 
 func NewUnauthorizedError(code Code, message string) Error {
-	return NewErrorWithCode(code, message)
+	return Error{code: code, message: message, httpStatus: http.StatusUnauthorized}
 }
 
 func NewTooManyRequestError(code Code, message string) Error {
-	return NewErrorWithCode(code, message)
+	return Error{code: code, message: message, httpStatus: http.StatusTooManyRequests}
 }
 
 func NewNotFoundError(code Code, message string) Error {
-	return NewErrorWithCode(code, message)
+	return Error{code: code, message: message, httpStatus: http.StatusNotFound}
 }
 
 func NewInternalServerError(code Code, message string, locator ...Locator) Error {
-	if len(locator) == 0 {
-		return NewErrorWithCode(code, message)
+	err := Error{code: code, message: message, httpStatus: http.StatusInternalServerError}
+	if len(locator) > 0 {
+		err.locator = &locator[0]
 	}
-
-	return NewErrorWithCodeAndLocator(code, message, &locator[0])
+	return err
 }

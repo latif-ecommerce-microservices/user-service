@@ -139,15 +139,10 @@ func buildCustomErrorResponse(w ResponseWriter, err error, log *logging.Logger) 
 		Message: parsedError.Error(),
 	}
 
-	respCode := 400
-	switch parsedError.Code() {
-	case string(customerror.ErrClient):
-		respCode = http.StatusBadRequest
-	case string(customerror.ErrNotFound):
-		respCode = http.StatusNotFound
-	default:
+	respCode := parsedError.HTTPStatus()
+
+	if respCode >= 500 {
 		sendLog(log, parsedError)
-		respCode = http.StatusInternalServerError
 	}
 
 	w.JSON(respCode, apiError)
