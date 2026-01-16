@@ -6,10 +6,12 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	AuthToken    string `json:"auth_token"`
+	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 }
 
 type LogoutRequest struct {
 	RefreshToken string `json:"refresh_token" validate:"required"`
+	AccessToken  string `json:"-"`
+	UserID       string `json:"-"`
 }

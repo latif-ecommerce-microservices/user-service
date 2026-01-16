@@ -7,16 +7,25 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
+	"google.golang.org/grpc"
+
 	"github.com/latif-ecommerce-microservices/user-service/internal/config"
-	"github.com/latif-ecommerce-microservices/user-service/internal/transport/http/handler"
+
+	authpb "github.com/latif-ecommerce-microservices/user-service/internal/generated/pb/auth"
+	userpb "github.com/latif-ecommerce-microservices/user-service/internal/generated/pb/user"
+
+	grpchandler "github.com/latif-ecommerce-microservices/user-service/internal/transport/grpc"
+	httphandler "github.com/latif-ecommerce-microservices/user-service/internal/transport/http/handler"
+
 	"github.com/latif-ecommerce-microservices/user-service/pkg/logging"
 )
 
 type Server struct {
-	srv    *http.Server
-	router chi.Router
-	cfg    *config.Config
-	logger *logging.Logger
+	srv     *http.Server
+	grpcSrv *grpc.Server
+	router  chi.Router
+	cfg     *config.Config
+	logger  *logging.Logger
 
 	InternalConnection *InternalConnection
 }
@@ -28,11 +37,14 @@ func NewAppServer(cfg *config.Config, logger *logging.Logger) *Server {
 		Handler: router,
 	}
 
+	grpcSrv := grpc.NewServer()
+
 	return &Server{
-		cfg:    cfg,
-		router: router,
-		srv:    srv,
-		logger: logger,
+		cfg:     cfg,
+		router:  router,
+		srv:     srv,
+		grpcSrv: grpcSrv,
+		logger:  logger,
 	}
 }
 
@@ -53,17 +65,30 @@ func (s *Server) BeforeStart(ctx context.Context) error {
 	service := NewService(repository)
 	newValidator := validator.New()
 
-	userHandler := handler.NewUserHandler(service.UserService, newValidator, s.logger)
+	userHandler := httphandler.NewUserHandler(service.UserService, newValidator, s.logger)
 	userHandler.RegisterRoutes(s.router)
 
-	authHandler := handler.NewAuthHandler(service.AuthService, newValidator, s.logger)
+	authHandler := httphandler.NewAuthHandler(service.AuthService, newValidator, s.logger)
 	authHandler.RegisterRoutes(s.router)
+
+	userGrpcHandler := grpchandler.NewUserHandler(service.UserService)
+	authGrpcHandler := grpchandler.NewAuthHandler(service.AuthService)
+
+	userpb.RegisterUserServiceServer(s.grpcSrv, userGrpcHandler)
+	authpb.RegisterAuthServiceServer(s.grpcSrv, authGrpcHandler)
+
+	//reflection.Register(s.grpcSrv)
 
 	s.InternalConnection = &internalClient
 	return nil
 }
 
 func (s *Server) AfterStart(ctx context.Context) error {
+
+	if s.grpcSrv != nil {
+		s.grpcSrv.GracefulStop()
+	}
+
 	if s.InternalConnection != nil {
 		err := s.InternalConnection.Close()
 		if err != nil {
@@ -76,4 +101,8 @@ func (s *Server) AfterStart(ctx context.Context) error {
 
 func (s *Server) HTTPServer() *http.Server {
 	return s.srv
+}
+
+func (s *Server) GRPCServer() *grpc.Server {
+	return s.grpcSrv
 }

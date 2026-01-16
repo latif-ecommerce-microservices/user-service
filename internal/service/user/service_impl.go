@@ -63,8 +63,9 @@ func (s *service) UpdateUser(ctx context.Context, id uuid.UUID, request dto.Upda
 	}
 
 	return &dto.UpdateUserResponse{
-		ID:        updatedUser.ID,
-		UpdatedAt: updatedUser.UpdatedAt.Format(time.DateTime),
+		ID:    updatedUser.ID,
+		Name:  updatedUser.Name,
+		Email: updatedUser.Email,
 	}, nil
 }
 
@@ -122,8 +123,9 @@ func (s *service) CreateUser(ctx context.Context, request dto.CreateUserRequest)
 	}
 
 	return dto.CreateUserResponse{
-		ID:        createdUser.ID,
-		CreatedAt: createdUser.CreatedAt.Format(time.DateTime),
+		ID:    createdUser.ID,
+		Name:  createdUser.Name,
+		Email: createdUser.Email,
 	}, nil
 }
 

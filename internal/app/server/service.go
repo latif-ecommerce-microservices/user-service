@@ -13,6 +13,6 @@ type Service struct {
 func NewService(repository Repository) Service {
 	return Service{
 		UserService: user.NewService(repository.UserRepository),
-		AuthService: auth.NewService(repository.UserRepository),
+		AuthService: auth.NewService(repository.UserRepository, repository.TokenRepository),
 	}
 }

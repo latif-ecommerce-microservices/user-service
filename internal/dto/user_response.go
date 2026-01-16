@@ -3,13 +3,15 @@ package dto
 import "github.com/google/uuid"
 
 type CreateUserResponse struct {
-	ID        uuid.UUID `json:"id"`
-	CreatedAt string    `json:"created_at"`
+	ID    uuid.UUID `json:"id"`
+	Name  string    `json:"name"`
+	Email string    `json:"email"`
 }
 
 type UpdateUserResponse struct {
-	ID        uuid.UUID `json:"id"`
-	UpdatedAt string    `json:"updated_at"`
+	ID    uuid.UUID `json:"id"`
+	Name  string    `json:"name"`
+	Email string    `json:"email"`
 }
 
 type DetailUserResponse struct {

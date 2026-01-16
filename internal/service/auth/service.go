@@ -7,5 +7,5 @@ import (
 
 type ServiceProvider interface {
 	Login(ctx context.Context, request dto.LoginRequest) (*dto.LoginResponse, error)
-	//Logout(ctx context.Context, token string) error
+	Logout(ctx context.Context, request dto.LogoutRequest) error
 }

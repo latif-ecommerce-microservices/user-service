@@ -59,7 +59,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 //func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
-//	var req dto.LoginRequest
+//	var req dto.LogoutRequest
 //
 //	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 //		httputil.WriteBadRequestResponse(w, "invalid JSON body", err.Error())
@@ -71,7 +71,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 //		return
 //	}
 //
-//	res, err := h.authService.Login(r.Context(), req)
+//	res, err := h.authService.Logout(r.Context(), req)
 //	if err != nil {
 //		httputil.HandleError(w, h.logger, err)
 //		return
