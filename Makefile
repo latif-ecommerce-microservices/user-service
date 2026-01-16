@@ -25,14 +25,14 @@ sync-jet:
 
 gen-proto:
 	@echo "Generating gRPC code..."
-	mkdir -p internal/generated/pb
+	mkdir -p pkg/pb
 	protoc \
-	--proto_path=api/proto \
-	--go_out=. \
-	--go_opt=module=github.com/latif-ecommerce-microservices/user-service \
-	--go-grpc_out=. \
-	--go-grpc_opt=module=github.com/latif-ecommerce-microservices/user-service \
-	api/proto/auth/*.proto api/proto/user/*.proto
+    	--proto_path=api/proto \
+    	--go_out=. \
+    	--go_opt=module=github.com/latif-ecommerce-microservices/user-service \
+    	--go-grpc_out=. \
+    	--go-grpc_opt=module=github.com/latif-ecommerce-microservices/user-service \
+    	api/proto/auth/*.proto api/proto/user/*.proto
 	@echo "gRPC code generated successfully."
 
 up-migration:
