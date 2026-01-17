@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/latif-ecommerce-microservices/user-service/internal/dto"
 
-	userpb "github.com/latif-ecommerce-microservices/user-service/internal/generated/pb/user"
+	userpb "github.com/latif-ecommerce-microservices/user-service/pkg/pb/user"
 
 	"github.com/latif-ecommerce-microservices/user-service/internal/service/user"
 

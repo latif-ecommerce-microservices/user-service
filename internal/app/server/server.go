@@ -11,8 +11,8 @@ import (
 
 	"github.com/latif-ecommerce-microservices/user-service/internal/config"
 
-	authpb "github.com/latif-ecommerce-microservices/user-service/internal/generated/pb/auth"
-	userpb "github.com/latif-ecommerce-microservices/user-service/internal/generated/pb/user"
+	authpb "github.com/latif-ecommerce-microservices/user-service/pkg/pb/auth"
+	userpb "github.com/latif-ecommerce-microservices/user-service/pkg/pb/user"
 
 	grpchandler "github.com/latif-ecommerce-microservices/user-service/internal/transport/grpc"
 	httphandler "github.com/latif-ecommerce-microservices/user-service/internal/transport/http/handler"

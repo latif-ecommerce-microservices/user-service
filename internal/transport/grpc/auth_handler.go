@@ -6,7 +6,7 @@ import (
 
 	"github.com/latif-ecommerce-microservices/user-service/internal/service/auth"
 
-	authpb "github.com/latif-ecommerce-microservices/user-service/internal/generated/pb/auth"
+	authpb "github.com/latif-ecommerce-microservices/user-service/pkg/pb/auth"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

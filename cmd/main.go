@@ -3,16 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
-	"net/http"
+	"net"
 
 	"github.com/latif-ecommerce-microservices/user-service/internal/app/server"
 	"github.com/latif-ecommerce-microservices/user-service/internal/config"
-	"github.com/latif-ecommerce-microservices/user-service/pkg/container"
 	"github.com/latif-ecommerce-microservices/user-service/pkg/logging"
 )
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	cfg, err := config.GetConfig()
 	if err != nil {
 		panic(err)
@@ -25,19 +26,29 @@ func main() {
 		panic(fmt.Sprintf("Migration error: %s", err.Error()))
 	}
 
-	logger.Info(fmt.Sprintf("[API] Starting API server at port %s...", cfg.AppHTTPPort))
-	apiServer := server.NewAppServer(cfg, logger)
-	servers := []*http.Server{apiServer.HTTPServer()}
+	appServer := server.NewAppServer(cfg, logger)
 
-	appContainer := container.New(
-		apiServer,
-		container.WithHTTPServer(servers),
-	)
-	err = appContainer.Start(ctx)
+	if err := appServer.BeforeStart(ctx); err != nil {
+		logger.Fatal(fmt.Sprintf("Failed to init server: %s", err.Error()))
+	}
+
+	grpcPort := cfg.GRPCPort
+	if grpcPort == "" {
+		grpcPort = "8001"
+	}
+
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", grpcPort))
 	if err != nil {
-		logger.Error(fmt.Sprintf("Server error: %s", err.Error()))
-		cancel()
-	} else {
-		logger.Info("[API] API server shutting down.")
+		logger.Fatal(fmt.Sprintf("Failed to listen on port %s: %v", grpcPort, err))
+	}
+
+	logger.Info(fmt.Sprintf("[gRPC] User Service running on port %s...", grpcPort))
+
+	if err := appServer.GRPCServer().Serve(lis); err != nil {
+		logger.Fatal(fmt.Sprintf("Failed to serve gRPC: %v", err))
+	}
+
+	if err := appServer.AfterStart(ctx); err != nil {
+		logger.Error(fmt.Sprintf("Error during cleanup: %v", err))
 	}
 }

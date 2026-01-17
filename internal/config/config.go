@@ -8,10 +8,10 @@ import (
 )
 
 type Config struct {
-	LogLevel    string `env:"LOG_LEVEL"`
-	AppHTTPPort string `env:"APP_HTTP_PORT" default:"8080"`
-	Database    DatabaseConfig
-	Redis       RedisConfig
+	LogLevel string `env:"LOG_LEVEL"`
+	GRPCPort string `env:"APP_GRPC_PORT" default:"8090"`
+	Database DatabaseConfig
+	Redis    RedisConfig
 }
 
 type DatabaseConfig struct {
