@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-playground/validator/v10"
 	"google.golang.org/grpc"
 
 	"github.com/latif-ecommerce-microservices/user-service/internal/config"
@@ -15,8 +14,6 @@ import (
 	userpb "github.com/latif-ecommerce-microservices/user-service/pkg/pb/user"
 
 	grpchandler "github.com/latif-ecommerce-microservices/user-service/internal/transport/grpc"
-	httphandler "github.com/latif-ecommerce-microservices/user-service/internal/transport/http/handler"
-
 	"github.com/latif-ecommerce-microservices/user-service/pkg/logging"
 )
 
@@ -33,7 +30,7 @@ type Server struct {
 func NewAppServer(cfg *config.Config, logger *logging.Logger) *Server {
 	router := chi.NewMux()
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%s", cfg.AppHTTPPort),
+		Addr:    fmt.Sprintf(":%s", cfg.GRPCPort),
 		Handler: router,
 	}
 
@@ -63,13 +60,6 @@ func (s *Server) BeforeStart(ctx context.Context) error {
 
 	repository := NewRepository(internalClient)
 	service := NewService(repository)
-	newValidator := validator.New()
-
-	userHandler := httphandler.NewUserHandler(service.UserService, newValidator, s.logger)
-	userHandler.RegisterRoutes(s.router)
-
-	authHandler := httphandler.NewAuthHandler(service.AuthService, newValidator, s.logger)
-	authHandler.RegisterRoutes(s.router)
 
 	userGrpcHandler := grpchandler.NewUserHandler(service.UserService)
 	authGrpcHandler := grpchandler.NewAuthHandler(service.AuthService)
@@ -97,10 +87,6 @@ func (s *Server) AfterStart(ctx context.Context) error {
 	}
 
 	return nil
-}
-
-func (s *Server) HTTPServer() *http.Server {
-	return s.srv
 }
 
 func (s *Server) GRPCServer() *grpc.Server {
