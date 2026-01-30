@@ -2,7 +2,10 @@ package grpc
 
 import (
 	"context"
+	"errors"
 	"github.com/latif-ecommerce-microservices/user-service/internal/dto"
+	"github.com/latif-ecommerce-microservices/user-service/pkg/customerror"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 
 	"github.com/latif-ecommerce-microservices/user-service/internal/service/auth"
 
@@ -34,8 +37,22 @@ func (h *AuthHandler) Login(
 	}
 
 	res, err := h.authService.Login(ctx, loginDto)
+
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		var ce customerror.Error
+		if errors.As(err, &ce) {
+			st := status.New(mapGRPCCode(ce), ce.Error())
+
+			st, _ = st.WithDetails(
+				&errdetails.ErrorInfo{
+					Reason: ce.Code(),
+				},
+			)
+
+			return nil, st.Err()
+		}
+
+		return nil, status.Error(codes.Internal, "internal server error")
 	}
 
 	return &authpb.LoginResponse{
