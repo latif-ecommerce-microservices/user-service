@@ -7,6 +7,7 @@ option go_package = "github.com/latif-ecommerce-microservices/user-service/pkg/p
 service UserService {
   rpc CreateUser(CreateUserRequest) returns (UserResponse);
   rpc GetUserByID(GetUserByIDRequest) returns (UserResponse);
+  rpc GetAllUsers(GetUserByIDRequest) returns (ListUserResponse);
   rpc UpdateUser(UpdateUserRequest) returns (UserResponse);
   rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
 }
