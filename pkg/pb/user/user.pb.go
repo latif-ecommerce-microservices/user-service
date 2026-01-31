@@ -401,11 +401,12 @@ const file_user_user_proto_rawDesc = "" +
 	"\x10ListUserResponse\x12+\n" +
 	"\x05users\x18\x01 \x03(\v2\x15.user.v1.UserResponseR\x05users\".\n" +
 	"\x12DeleteUserResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess2\x99\x02\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess2\xe0\x02\n" +
 	"\vUserService\x12?\n" +
 	"\n" +
 	"CreateUser\x12\x1a.user.v1.CreateUserRequest\x1a\x15.user.v1.UserResponse\x12A\n" +
-	"\vGetUserByID\x12\x1b.user.v1.GetUserByIDRequest\x1a\x15.user.v1.UserResponse\x12?\n" +
+	"\vGetUserByID\x12\x1b.user.v1.GetUserByIDRequest\x1a\x15.user.v1.UserResponse\x12E\n" +
+	"\vGetAllUsers\x12\x1b.user.v1.GetUserByIDRequest\x1a\x19.user.v1.ListUserResponse\x12?\n" +
 	"\n" +
 	"UpdateUser\x12\x1a.user.v1.UpdateUserRequest\x1a\x15.user.v1.UserResponse\x12E\n" +
 	"\n" +
@@ -437,14 +438,16 @@ var file_user_user_proto_depIdxs = []int32{
 	4, // 0: user.v1.ListUserResponse.users:type_name -> user.v1.UserResponse
 	0, // 1: user.v1.UserService.CreateUser:input_type -> user.v1.CreateUserRequest
 	1, // 2: user.v1.UserService.GetUserByID:input_type -> user.v1.GetUserByIDRequest
-	2, // 3: user.v1.UserService.UpdateUser:input_type -> user.v1.UpdateUserRequest
-	3, // 4: user.v1.UserService.DeleteUser:input_type -> user.v1.DeleteUserRequest
-	4, // 5: user.v1.UserService.CreateUser:output_type -> user.v1.UserResponse
-	4, // 6: user.v1.UserService.GetUserByID:output_type -> user.v1.UserResponse
-	4, // 7: user.v1.UserService.UpdateUser:output_type -> user.v1.UserResponse
-	6, // 8: user.v1.UserService.DeleteUser:output_type -> user.v1.DeleteUserResponse
-	5, // [5:9] is the sub-list for method output_type
-	1, // [1:5] is the sub-list for method input_type
+	1, // 3: user.v1.UserService.GetAllUsers:input_type -> user.v1.GetUserByIDRequest
+	2, // 4: user.v1.UserService.UpdateUser:input_type -> user.v1.UpdateUserRequest
+	3, // 5: user.v1.UserService.DeleteUser:input_type -> user.v1.DeleteUserRequest
+	4, // 6: user.v1.UserService.CreateUser:output_type -> user.v1.UserResponse
+	4, // 7: user.v1.UserService.GetUserByID:output_type -> user.v1.UserResponse
+	5, // 8: user.v1.UserService.GetAllUsers:output_type -> user.v1.ListUserResponse
+	4, // 9: user.v1.UserService.UpdateUser:output_type -> user.v1.UserResponse
+	6, // 10: user.v1.UserService.DeleteUser:output_type -> user.v1.DeleteUserResponse
+	6, // [6:11] is the sub-list for method output_type
+	1, // [1:6] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
