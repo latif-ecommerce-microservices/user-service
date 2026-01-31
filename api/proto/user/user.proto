@@ -37,6 +37,10 @@ message UserResponse {
   string name = 3;
 }
 
+message ListUserResponse {
+  repeated UserResponse users = 1;
+}
+
 message DeleteUserResponse {
   bool success = 1;
 }

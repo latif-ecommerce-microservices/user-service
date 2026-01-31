@@ -13,6 +13,7 @@ import (
 
 	"github.com/latif-ecommerce-microservices/user-service/internal/generated/go_check/public/model"
 	"github.com/latif-ecommerce-microservices/user-service/internal/generated/go_check/public/table"
+	custommodel "github.com/latif-ecommerce-microservices/user-service/internal/model"
 )
 
 type userRepository struct {
@@ -110,6 +111,25 @@ func (r *userRepository) GetActiveUserByEmail(ctx context.Context, email string)
 	}
 
 	return &user, nil
+}
+
+func (r *userRepository) FindAllActiveUser(ctx context.Context) (custommodel.Users, error) {
+	t := table.Users
+
+	stmt := t.
+		SELECT(t.AllColumns).
+		WHERE(t.DeletedAt.IS_NULL())
+
+	var users custommodel.Users
+	err := stmt.QueryContext(ctx, r.db, &users)
+	if err != nil {
+		if errors.Is(err, qrm.ErrNoRows) {
+			return users, nil
+		}
+		return users, err
+	}
+
+	return users, nil
 }
 
 func (r *userRepository) CreateUser(ctx context.Context, user model.Users) (model.Users, error) {

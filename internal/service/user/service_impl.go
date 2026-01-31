@@ -147,6 +147,30 @@ func (s *service) GetByID(ctx context.Context, id uuid.UUID) (*dto.DetailUserRes
 	}, nil
 }
 
+func (s *service) GetAllUsers(ctx context.Context, id uuid.UUID) (dto.ListUserResponse, error) {
+	// check user admin or not
+	// SOOONNN
+
+	users, err := s.userRepo.FindAllActiveUser(ctx)
+	if err != nil {
+		return nil, customerror.InternalServerError.WithCause(err).WithStackTrace()
+	}
+
+	result := make(dto.ListUserResponse, 0, len(users))
+	for _, user := range users {
+		result = append(result, dto.DetailUserResponse{
+			ID:          user.ID,
+			Name:        user.Name,
+			Email:       user.Email,
+			PhoneNumber: user.PhoneNumber,
+			CreatedAt:   user.CreatedAt,
+			UpdatedAt:   user.UpdatedAt,
+		})
+	}
+
+	return result, nil
+}
+
 func NewService(userRepo repository.UserRepositoryProvider) ServiceProvider {
 	return &service{userRepo: userRepo}
 }

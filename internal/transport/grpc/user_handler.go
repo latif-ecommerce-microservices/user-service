@@ -64,6 +64,27 @@ func (h *UserHandler) GetUserByID(ctx context.Context, req *userpb.GetUserByIDRe
 	}, nil
 }
 
+func (h *UserHandler) GetAllUsers(ctx context.Context, id uuid.UUID) (*userpb.ListUserResponse, error) {
+	res, err := h.userService.GetAllUsers(ctx, id)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	resp := &userpb.ListUserResponse{
+		Users: make([]*userpb.UserResponse, 0, len(res)),
+	}
+
+	for _, u := range res {
+		resp.Users = append(resp.Users, &userpb.UserResponse{
+			Id:    u.ID.String(),
+			Email: u.Email,
+			Name:  u.Name,
+		})
+	}
+
+	return resp, nil
+}
+
 func (h *UserHandler) UpdateUser(ctx context.Context, req *userpb.UpdateUserRequest) (*userpb.UserResponse, error) {
 
 	id, err := uuid.Parse(req.Id)

@@ -289,6 +289,50 @@ func (x *UserResponse) GetName() string {
 	return ""
 }
 
+type ListUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Users         []*UserResponse        `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserResponse) Reset() {
+	*x = ListUserResponse{}
+	mi := &file_user_user_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserResponse) ProtoMessage() {}
+
+func (x *ListUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_user_user_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserResponse.ProtoReflect.Descriptor instead.
+func (*ListUserResponse) Descriptor() ([]byte, []int) {
+	return file_user_user_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ListUserResponse) GetUsers() []*UserResponse {
+	if x != nil {
+		return x.Users
+	}
+	return nil
+}
+
 type DeleteUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
@@ -298,7 +342,7 @@ type DeleteUserResponse struct {
 
 func (x *DeleteUserResponse) Reset() {
 	*x = DeleteUserResponse{}
-	mi := &file_user_user_proto_msgTypes[5]
+	mi := &file_user_user_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -310,7 +354,7 @@ func (x *DeleteUserResponse) String() string {
 func (*DeleteUserResponse) ProtoMessage() {}
 
 func (x *DeleteUserResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_user_user_proto_msgTypes[5]
+	mi := &file_user_user_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -323,7 +367,7 @@ func (x *DeleteUserResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteUserResponse.ProtoReflect.Descriptor instead.
 func (*DeleteUserResponse) Descriptor() ([]byte, []int) {
-	return file_user_user_proto_rawDescGZIP(), []int{5}
+	return file_user_user_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *DeleteUserResponse) GetSuccess() bool {
@@ -353,7 +397,9 @@ const file_user_user_proto_rawDesc = "" +
 	"\fUserResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x12\n" +
-	"\x04name\x18\x03 \x01(\tR\x04name\".\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\"?\n" +
+	"\x10ListUserResponse\x12+\n" +
+	"\x05users\x18\x01 \x03(\v2\x15.user.v1.UserResponseR\x05users\".\n" +
 	"\x12DeleteUserResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess2\x99\x02\n" +
 	"\vUserService\x12?\n" +
@@ -377,29 +423,31 @@ func file_user_user_proto_rawDescGZIP() []byte {
 	return file_user_user_proto_rawDescData
 }
 
-var file_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_user_user_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_user_user_proto_goTypes = []any{
 	(*CreateUserRequest)(nil),  // 0: user.v1.CreateUserRequest
 	(*GetUserByIDRequest)(nil), // 1: user.v1.GetUserByIDRequest
 	(*UpdateUserRequest)(nil),  // 2: user.v1.UpdateUserRequest
 	(*DeleteUserRequest)(nil),  // 3: user.v1.DeleteUserRequest
 	(*UserResponse)(nil),       // 4: user.v1.UserResponse
-	(*DeleteUserResponse)(nil), // 5: user.v1.DeleteUserResponse
+	(*ListUserResponse)(nil),   // 5: user.v1.ListUserResponse
+	(*DeleteUserResponse)(nil), // 6: user.v1.DeleteUserResponse
 }
 var file_user_user_proto_depIdxs = []int32{
-	0, // 0: user.v1.UserService.CreateUser:input_type -> user.v1.CreateUserRequest
-	1, // 1: user.v1.UserService.GetUserByID:input_type -> user.v1.GetUserByIDRequest
-	2, // 2: user.v1.UserService.UpdateUser:input_type -> user.v1.UpdateUserRequest
-	3, // 3: user.v1.UserService.DeleteUser:input_type -> user.v1.DeleteUserRequest
-	4, // 4: user.v1.UserService.CreateUser:output_type -> user.v1.UserResponse
-	4, // 5: user.v1.UserService.GetUserByID:output_type -> user.v1.UserResponse
-	4, // 6: user.v1.UserService.UpdateUser:output_type -> user.v1.UserResponse
-	5, // 7: user.v1.UserService.DeleteUser:output_type -> user.v1.DeleteUserResponse
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	4, // 0: user.v1.ListUserResponse.users:type_name -> user.v1.UserResponse
+	0, // 1: user.v1.UserService.CreateUser:input_type -> user.v1.CreateUserRequest
+	1, // 2: user.v1.UserService.GetUserByID:input_type -> user.v1.GetUserByIDRequest
+	2, // 3: user.v1.UserService.UpdateUser:input_type -> user.v1.UpdateUserRequest
+	3, // 4: user.v1.UserService.DeleteUser:input_type -> user.v1.DeleteUserRequest
+	4, // 5: user.v1.UserService.CreateUser:output_type -> user.v1.UserResponse
+	4, // 6: user.v1.UserService.GetUserByID:output_type -> user.v1.UserResponse
+	4, // 7: user.v1.UserService.UpdateUser:output_type -> user.v1.UserResponse
+	6, // 8: user.v1.UserService.DeleteUser:output_type -> user.v1.DeleteUserResponse
+	5, // [5:9] is the sub-list for method output_type
+	1, // [1:5] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_user_user_proto_init() }
@@ -413,7 +461,7 @@ func file_user_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_user_user_proto_rawDesc), len(file_user_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

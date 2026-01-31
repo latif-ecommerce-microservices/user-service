@@ -1,6 +1,9 @@
 package dto
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
 type CreateUserResponse struct {
 	ID    uuid.UUID `json:"id"`
@@ -15,10 +18,12 @@ type UpdateUserResponse struct {
 }
 
 type DetailUserResponse struct {
-	ID          uuid.UUID `json:"id"`
-	Name        string    `json:"name"`
-	Email       string    `json:"email"`
-	PhoneNumber *string   `json:"phone_number"`
-	CreatedAt   *string   `json:"created_at"`
-	UpdatedAt   *string   `json:"updated_at"`
+	ID          uuid.UUID  `json:"id"`
+	Name        string     `json:"name"`
+	Email       string     `json:"email"`
+	PhoneNumber *string    `json:"phone_number,omitempty"`
+	CreatedAt   time.Time  `json:"created_at"`
+	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
 }
+
+type ListUserResponse = []DetailUserResponse
