@@ -64,7 +64,12 @@ func (h *UserHandler) GetUserByID(ctx context.Context, req *userpb.GetUserByIDRe
 	}, nil
 }
 
-func (h *UserHandler) GetAllUsers(ctx context.Context, id uuid.UUID) (*userpb.ListUserResponse, error) {
+func (h *UserHandler) GetAllUsers(ctx context.Context, req *userpb.GetUserByIDRequest) (*userpb.ListUserResponse, error) {
+	id, err := uuid.Parse(req.Id)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid user id format")
+	}
+
 	res, err := h.userService.GetAllUsers(ctx, id)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
