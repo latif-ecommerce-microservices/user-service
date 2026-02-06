@@ -1,6 +1,8 @@
 package tokenhelper
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"time"
@@ -22,13 +24,11 @@ func GenerateAccessToken(userID uuid.UUID) (string, error) {
 	return token.SignedString(accessSecret)
 }
 
-func GenerateRefreshToken(userID uuid.UUID) (string, error) {
-	claims := jwt.MapClaims{
-		"user_id": userID.String(),
-		"exp":     time.Now().Add(7 * 24 * time.Hour).Unix(),
-		"iat":     time.Now().Unix(),
+func GenerateRefreshToken() (string, error) {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", err
 	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(refreshSecret)
+	return hex.EncodeToString(b), nil
 }

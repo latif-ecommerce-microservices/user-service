@@ -45,7 +45,7 @@ func (s service) Login(ctx context.Context, request dto.LoginRequest) (*dto.Logi
 			WithLocator(customerror.WhereAmI())
 	}
 
-	refreshToken, err := tokenhelper.GenerateRefreshToken(user.ID)
+	refreshToken, err := tokenhelper.GenerateRefreshToken()
 	if err != nil {
 		return nil, customerror.InternalServerError.
 			WithCause(err).
