@@ -13,9 +13,10 @@ var (
 	refreshSecret = []byte("refresh-secret-key")
 )
 
-func GenerateAccessToken(userID uuid.UUID) (string, error) {
+func GenerateAccessToken(userID uuid.UUID, role string) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id": userID.String(),
+		"role":    role,
 		"exp":     time.Now().Add(15 * time.Minute).Unix(),
 		"iat":     time.Now().Unix(),
 	}

@@ -38,7 +38,7 @@ func (s service) Login(ctx context.Context, request dto.LoginRequest) (*dto.Logi
 			WithLocator(customerror.WhereAmI())
 	}
 
-	accessToken, err := tokenhelper.GenerateAccessToken(user.ID)
+	accessToken, err := tokenhelper.GenerateAccessToken(user.ID, user.Role)
 	if err != nil {
 		return nil, customerror.InternalServerError.
 			WithCause(err).
