@@ -40,6 +40,12 @@ func (r *tokenRepository) GetRefreshToken(ctx context.Context, userID string) (s
 }
 
 func (r *tokenRepository) DeleteRefreshToken(ctx context.Context, userID string) error {
-	//TODO implement me
-	panic("implement me")
+	key := "refresh_token:" + userID
+
+	err := r.client.Del(ctx, key).Err()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

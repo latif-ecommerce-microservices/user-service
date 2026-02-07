@@ -60,3 +60,33 @@ func (h *AuthHandler) Login(
 		RefreshToken: res.RefreshToken,
 	}, nil
 }
+
+func (h *AuthHandler) Logout(
+	ctx context.Context,
+	req *authpb.LogoutRequest,
+) (*authpb.LogoutResponse, error) {
+
+	logoutDto := dto.LogoutRequest{
+		RefreshToken: req.RefreshToken,
+	}
+
+	err := h.authService.Logout(ctx, logoutDto)
+	if err != nil {
+		var ce customerror.Error
+		if errors.As(err, &ce) {
+			st := status.New(mapGRPCCode(ce), ce.Error())
+
+			st, _ = st.WithDetails(
+				&errdetails.ErrorInfo{
+					Reason: ce.Code(),
+				},
+			)
+
+			return nil, st.Err()
+		}
+
+		return nil, status.Error(codes.Internal, "internal server error")
+	}
+
+	return &authpb.LogoutResponse{}, nil
+}
