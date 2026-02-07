@@ -66,19 +66,23 @@ func (s service) Login(ctx context.Context, request dto.LoginRequest) (*dto.Logi
 }
 
 func (s service) Logout(ctx context.Context, request dto.LogoutRequest) error {
-	userID := request.UserID
+	refreshToken := request.RefreshToken
 
-	err := s.tokenRepo.DeleteRefreshToken(ctx, userID)
+	err := s.tokenRepo.DeleteRefreshToken(ctx, refreshToken)
 	if err != nil {
 		return customerror.InternalServerError.
 			WithCause(err).
 			WithLocator(customerror.WhereAmI())
 	}
 
-	if request.AccessToken != "" {
-		err = s.tokenRepo.BlacklistAccessToken(ctx, request.AccessToken, 15*time.Minute)
-		if err != nil {
-			s.logger.Error(fmt.Sprintf("failed to blacklist token: %v", err))
+	if request.AccessToken != "" && request.ExpiresAt > 0 {
+		expTime := time.Unix(request.ExpiresAt, 0)
+		ttl := time.Until(expTime)
+
+		if ttl > 0 {
+			if err := s.tokenRepo.BlacklistAccessToken(ctx, request.AccessToken, ttl); err != nil {
+				s.logger.Error(fmt.Sprintf("failed to blacklist token: %v", err))
+			}
 		}
 	}
 

@@ -12,6 +12,6 @@ type LoginResponse struct {
 
 type LogoutRequest struct {
 	RefreshToken string `json:"refresh_token" validate:"required"`
-	AccessToken  string `json:"-"`
-	UserID       string `json:"-"`
+	AccessToken  string `json:"access_token"`
+	ExpiresAt    int64  `json:"expires_at"`
 }

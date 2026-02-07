@@ -34,6 +34,8 @@ message ValidateTokenResponse {
 
 message LogoutRequest {
   string refresh_token = 1;
+  string access_token = 2;
+  int64 expires_at = 3;
 }
 
 message LogoutResponse {}

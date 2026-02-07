@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"errors"
 	"github.com/latif-ecommerce-microservices/user-service/internal/repository"
 	"github.com/redis/go-redis/v9"
 	"time"
@@ -22,16 +23,21 @@ func (r *tokenRepository) SaveRefreshToken(ctx context.Context, userID string, t
 
 func (r *tokenRepository) BlacklistAccessToken(ctx context.Context, token string, duration time.Duration) error {
 	key := "blacklist:" + token
-	return r.client.Set(ctx, key, "true", duration).Err()
+	return r.client.Set(ctx, key, "1", duration).Err()
 }
 
 func (r *tokenRepository) IsTokenBlacklisted(ctx context.Context, token string) (bool, error) {
 	key := "blacklist:" + token
-	val, err := r.client.Get(ctx, key).Result()
-	if err == redis.Nil {
+
+	_, err := r.client.Get(ctx, key).Result()
+	if errors.Is(err, redis.Nil) {
 		return false, nil
 	}
-	return val == "true", err
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (r *tokenRepository) GetRefreshToken(ctx context.Context, userID string) (string, error) {
